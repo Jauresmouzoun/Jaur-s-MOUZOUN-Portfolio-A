@@ -1,79 +1,84 @@
 <!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+<html lang="fr" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jaurès MOUZOUN | Ingénieur Statisticien Économiste</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              night: {
-                900: '#020617', // Deepest background
-                800: '#0f172a', // Section background
-                700: '#1e293b', // Card background
-              },
-              steel: {
-                400: '#38bdf8', // Primary accent (Sky/Steel)
-                500: '#0ea5e9', // Hover state
-                600: '#0284c7', // Active state
-              },
-              offwhite: '#f8fafc', // Main text
-              muted: '#94a3b8', // Secondary text
-            },
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-            },
-            animation: {
-              'float': 'float 6s ease-in-out infinite',
-            },
-            keyframes: {
-              float: {
-                '0%, 100%': { transform: 'translateY(0)' },
-                '50%': { transform: 'translateY(-20px)' },
-              }
-            }
-          },
+    <title>Jaurès MOUZOUN | Ingénieur Statisticien Économiste & Data Science</title>
+    <meta
+      name="description"
+      content="Portfolio interactif de Jaurès MOUZOUN, élève ingénieur statisticien économiste (ISE 2) à l'ENEAM. Découvrez ses projets en data science, économétrie, séries temporelles et visualisations 3D."
+    />
+    <meta name="author" content="Jaurès MOUZOUN" />
+    <meta
+      name="keywords"
+      content="Jaurès MOUZOUN, Ingénieur Statisticien Économiste, ENEAM, Data Science, Économétrie, Machine Learning, Python, R, Bénin, Cotonou"
+    />
+
+    <!-- OpenGraph Social Cards -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Jaurès MOUZOUN | Ingénieur Statisticien Économiste & Data Science" />
+    <meta
+      property="og:description"
+      content="Modélisation économétrique, machine learning, séries temporelles et laboratoire 3D interactif. Portfolio bilingue FR/EN avec CV actualisés."
+    />
+    <meta property="og:image" content="/og-card.svg" />
+    <meta property="og:site_name" content="Jaurès MOUZOUN – Portfolio" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:locale:alternate" content="en_US" />
+
+    <!-- Twitter / X Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Jaurès MOUZOUN | Ingénieur Statisticien Économiste" />
+    <meta
+      name="twitter:description"
+      content="Modélisation économétrique, data science, machine learning et visualisations 3D interactives."
+    />
+    <meta name="twitter:image" content="/og-card.svg" />
+
+    <!-- Typography (2+1 System: Outfit Display, Plus Jakarta Sans Body, JetBrains Mono Data) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Schema.org Structured Data (Person) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Jaurès MOUZOUN",
+        "jobTitle": "Élève Ingénieur Statisticien Économiste (ISE 2)",
+        "affiliation": {
+          "@type": "EducationalOrganization",
+          "name": "École Nationale d'Économie Appliquée et de Management (ENEAM) - Université d'Abomey-Calavi"
         },
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Cotonou",
+          "addressCountry": "BJ"
+        },
+        "email": "mailto:jaures23mzn@gmail.com",
+        "telephone": "+2290157413029",
+        "sameAs": [
+          "https://bit.ly/4kwda4C"
+        ],
+        "knowsAbout": [
+          "Econometrics",
+          "Panel Data",
+          "Machine Learning",
+          "Statistical Modeling",
+          "Python",
+          "R",
+          "Time Series Analysis",
+          "Data Visualization"
+        ]
       }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-      body {
-        background-color: #020617;
-        color: #f8fafc;
-      }
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #0f172a;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #334155;
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #475569;
-      }
-    </style>
-  <script type="importmap">
-{
-  "imports": {
-    "framer-motion": "https://esm.sh/framer-motion@^12.25.0",
-    "recharts": "https://esm.sh/recharts@^3.6.0",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0"
-  }
-}
-</script>
-</head>
-  <body>
+  </head>
+  <body class="bg-slate-50 text-slate-900 dark:bg-night-900 dark:text-offwhite min-h-screen antialiased selection:bg-steel-500 selection:text-white">
     <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>

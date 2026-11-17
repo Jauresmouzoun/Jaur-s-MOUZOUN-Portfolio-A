@@ -1,96 +1,188 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { BarChart3, Database, PenTool, Layout, Code, PieChart } from 'lucide-react';
-
-const skillCategories = [
-  {
-    title: "Analyse de Données",
-    icon: <Database className="w-6 h-6 text-steel-400" />,
-    skills: [
-      { name: "R & RStudio", level: 90 },
-      { name: "Python (Pandas, NumPy)", level: 85 },
-      { name: "Excel Avancé (VBA)", level: 95 },
-      { name: "Économétrie", level: 88 },
-    ]
-  },
-  {
-    title: "Visualisation",
-    icon: <PieChart className="w-6 h-6 text-steel-400" />,
-    skills: [
-      { name: "Power BI", level: 85 },
-      { name: "Tableaux de bord interactifs", level: 90 },
-      { name: "Data Storytelling", level: 80 },
-    ]
-  },
-  {
-    title: "Digital & Créativité",
-    icon: <PenTool className="w-6 h-6 text-steel-400" />,
-    skills: [
-      { name: "Suite Adobe (Ps, Ai)", level: 75 },
-      { name: "CMS (Web Management)", level: 80 },
-      { name: "Marketing Digital", level: 85 },
-    ]
-  }
-];
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { BarChart2, Cpu, CheckCircle2, Terminal, Compass } from 'lucide-react';
+import {
+  ResponsiveContainer,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  Radar,
+  Tooltip,
+} from 'recharts';
+import { useApp } from '../context/AppContext';
+import { portfolioData } from '../data/portfolioData';
 
 export default function Skills() {
-  return (
-    <section id="competences" className="py-24 bg-night-900 relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-steel-600/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+  const { language, theme } = useApp();
+  const t = portfolioData[language].skills;
 
-      <div className="max-w-7xl mx-auto px-6">
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start end', 'end start'],
+  });
+
+  const backgroundY = useTransform(scrollYProgress, [0, 1], [-40, 40]);
+
+  const radarData = [
+    {
+      axis: language === 'fr' ? 'Économétrie' : 'Econometrics',
+      score: 92,
+    },
+    {
+      axis: language === 'fr' ? 'Statistique Math.' : 'Math. Stats',
+      score: 90,
+    },
+    {
+      axis: 'DataViz & BI',
+      score: 88,
+    },
+    {
+      axis: 'Machine Learning',
+      score: 86,
+    },
+    {
+      axis: language === 'fr' ? 'Dev & VBA/SQL' : 'Dev & VBA/SQL',
+      score: 85,
+    },
+  ];
+
+  const getCategoryIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'code':
+        return <Terminal className="w-5 h-5 text-steel-500" />;
+      case 'barChart':
+        return <BarChart2 className="w-5 h-5 text-sky-500" />;
+      case 'cpu':
+        return <Cpu className="w-5 h-5 text-indigo-500" />;
+      case 'check':
+        return <CheckCircle2 className="w-5 h-5 text-emerald-500" />;
+      default:
+        return <Compass className="w-5 h-5 text-steel-500" />;
+    }
+  };
+
+  const gridStroke = theme === 'dark' ? '#334155' : '#cbd5e1';
+  const labelFill = theme === 'dark' ? '#cbd5e1' : '#334155';
+
+  return (
+    <section
+      id="competences"
+      ref={containerRef}
+      className="py-24 bg-slate-100/70 dark:bg-night-800 relative overflow-hidden transition-colors duration-300"
+    >
+      <motion.div
+        style={{ y: backgroundY }}
+        className="absolute top-0 right-0 w-96 h-96 bg-steel-400/5 dark:bg-steel-600/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"
+      />
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-offwhite mb-4">Expertise Technique</h2>
-          <p className="text-muted max-w-2xl mx-auto">
-            Une combinaison de rigueur mathématique et de créativité numérique pour des solutions complètes.
+          <p className="text-xs font-mono font-semibold uppercase tracking-wider text-steel-600 dark:text-steel-400 mb-2">
+            {language === 'fr' ? 'Savoir-Faire & Stack' : 'Expertise & Stack'}
+          </p>
+          <h2
+            className="text-3xl md:text-4xl font-display font-extrabold text-slate-900 dark:text-offwhite mb-3"
+            style={{ textWrap: 'balance' }}
+          >
+            {t.title}
+          </h2>
+          <div className="h-1 w-20 bg-steel-500 mx-auto rounded-full mb-4" />
+          <p className="text-sm md:text-base text-slate-600 dark:text-muted max-w-2xl mx-auto">
+            {t.subtitle}
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {skillCategories.map((category, idx) => (
+        {/* 4 Skill Matrices (unboxed hairline rows instead of nested cards) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          {t.categories.map((category, idx) => (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: idx * 0.1, duration: 0.5 }}
-              className="bg-night-800 rounded-xl p-8 border border-night-700 hover:border-steel-500/30 transition-all hover:shadow-lg hover:shadow-steel-500/10 group"
+              transition={{ delay: idx * 0.08, duration: 0.4 }}
+              className="bg-white dark:bg-night-900 rounded-2xl p-6 border border-slate-200 dark:border-night-700 shadow-sm flex flex-col"
             >
-              <div className="flex items-center gap-3 mb-8">
-                <div className="p-3 bg-night-900 rounded-lg border border-night-700 group-hover:border-steel-500/50 transition-colors">
-                  {category.icon}
+              <div className="flex items-center gap-3 mb-5 pb-3 border-b border-slate-100 dark:border-night-800">
+                <div className="p-2 rounded-lg bg-slate-100 dark:bg-night-800">
+                  {getCategoryIcon(category.icon)}
                 </div>
-                <h3 className="text-xl font-bold text-offwhite">{category.title}</h3>
+                <h3 className="text-base font-display font-bold text-slate-900 dark:text-offwhite leading-tight">
+                  {category.title}
+                </h3>
               </div>
 
-              <div className="space-y-6">
-                {category.skills.map((skill, sIdx) => (
-                  <div key={sIdx}>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm font-medium text-muted">{skill.name}</span>
-                      <span className="text-sm font-medium text-steel-400">{skill.level}%</span>
-                    </div>
-                    <div className="h-2 w-full bg-night-900 rounded-full overflow-hidden">
-                      <motion.div
-                        className="h-full bg-gradient-to-r from-steel-600 to-steel-400"
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${skill.level}%` }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
-                      />
-                    </div>
-                  </div>
+              <ul className="divide-y divide-slate-100 dark:divide-night-800">
+                {category.items.map((item, itemIdx) => (
+                  <li
+                    key={itemIdx}
+                    className="py-2.5 flex items-center justify-between gap-2 text-xs sm:text-sm"
+                  >
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">
+                      {item.name}
+                    </span>
+                    {item.badge && (
+                      <span className="text-[11px] font-mono text-steel-600 dark:text-steel-400 whitespace-nowrap">
+                        {item.badge}
+                      </span>
+                    )}
+                  </li>
                 ))}
-              </div>
+              </ul>
             </motion.div>
           ))}
         </div>
+
+        {/* Analytical Engineering Radar Chart */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-2xl mx-auto bg-white dark:bg-night-900 rounded-2xl p-6 border border-slate-200 dark:border-night-700 shadow-sm flex flex-col"
+        >
+          <div className="text-center mb-2">
+            <h3 className="text-base font-display font-bold text-slate-900 dark:text-offwhite mb-1">
+              {language === 'fr' ? 'Profil d’Ingénierie Analytique' : 'Analytical Engineering Profile'}
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-muted">
+              {language === 'fr'
+                ? 'Équilibre entre théorie statistique, modélisation et déploiement'
+                : 'Balance across statistical theory, modeling, and deployment'}
+            </p>
+          </div>
+          <div className="w-full h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart cx="50%" cy="50%" outerRadius="74%" data={radarData}>
+                <PolarGrid stroke={gridStroke} />
+                <PolarAngleAxis
+                  dataKey="axis"
+                  tick={{ fill: labelFill, fontSize: 11, fontWeight: 500 }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: theme === 'dark' ? '#0f172a' : '#ffffff',
+                    borderColor: gridStroke,
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                  }}
+                />
+                <Radar
+                  name={language === 'fr' ? 'Maîtrise' : 'Proficiency'}
+                  dataKey="score"
+                  stroke="#0ea5e9"
+                  fill="#38bdf8"
+                  fillOpacity={0.32}
+                />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

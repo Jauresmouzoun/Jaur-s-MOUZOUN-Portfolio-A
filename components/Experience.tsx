@@ -1,109 +1,119 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Briefcase, TrendingUp, BarChart, CheckCircle2 } from 'lucide-react';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { Briefcase, CheckCircle2, Users, TrendingUp, BarChart3, Building2 } from 'lucide-react';
+import { useApp } from '../context/AppContext';
+import { portfolioData } from '../data/portfolioData';
 
 export default function Experience() {
+  const { language } = useApp();
+  const t = portfolioData[language].experience;
+
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start end', 'end start'],
+  });
+
+  const backgroundY = useTransform(scrollYProgress, [0, 1], [30, -30]);
+
+  const getExperienceIcon = (id: string) => {
+    switch (id) {
+      case 'dpaf':
+        return <BarChart3 className="w-7 h-7 text-steel-500" />;
+      case 'socioanimer':
+        return <TrendingUp className="w-7 h-7 text-sky-500" />;
+      case 'begise':
+        return <Users className="w-7 h-7 text-indigo-500" />;
+      default:
+        return <Briefcase className="w-7 h-7 text-steel-500" />;
+    }
+  };
+
   return (
-    <section id="experiences" className="py-24 bg-night-800">
-      <div className="max-w-7xl mx-auto px-6">
+    <section
+      id="experiences"
+      ref={containerRef}
+      className="py-24 bg-slate-50 dark:bg-night-900 relative overflow-hidden transition-colors duration-300"
+    >
+      <motion.div
+        style={{ y: backgroundY }}
+        className="absolute bottom-0 left-0 w-96 h-96 bg-steel-400/5 dark:bg-steel-600/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 pointer-events-none"
+      />
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-offwhite mb-4">Expériences Clés</h2>
-          <div className="h-1 w-20 bg-steel-500 mx-auto rounded-full"></div>
+          <p className="text-xs font-mono font-semibold uppercase tracking-wider text-steel-600 dark:text-steel-400 mb-2">
+            {language === 'fr' ? 'Parcours Terrain' : 'Career Milestones'}
+          </p>
+          <h2
+            className="text-3xl md:text-4xl font-display font-extrabold text-slate-900 dark:text-offwhite mb-3"
+            style={{ textWrap: 'balance' }}
+          >
+            {t.title}
+          </h2>
+          <div className="h-1 w-20 bg-steel-500 mx-auto rounded-full mb-4" />
+          <p className="text-sm md:text-base text-slate-600 dark:text-muted max-w-2xl mx-auto">
+            {t.subtitle}
+          </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          
-          {/* Card 1: Ministry */}
-          <motion.div 
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="bg-night-900 rounded-2xl p-8 border border-night-700 hover:border-steel-500/40 transition-all hover:shadow-xl relative overflow-hidden group"
-          >
-             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <BarChart size={120} />
-             </div>
-             
-             <div className="relative z-10">
-                <div className="flex justify-between items-start mb-6">
-                    <div>
-                        <h3 className="text-xl font-bold text-offwhite mb-1">Stage Académique</h3>
-                        <p className="text-steel-400 font-medium">Ministère de l'Enseignement Secondaire</p>
-                    </div>
-                    <span className="text-xs font-mono bg-night-800 text-muted px-3 py-1 rounded-full border border-night-700">Mai - Juin 2025</span>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {t.items.map((exp, idx) => (
+            <motion.article
+              key={exp.id}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.08, duration: 0.4 }}
+              className="bg-white dark:bg-night-800 rounded-2xl p-7 border border-slate-200 dark:border-night-700 hover:border-steel-400 dark:hover:border-steel-500/40 transition-colors duration-200 shadow-sm hover:shadow-md flex flex-col justify-between group"
+            >
+              <div>
+                <div className="flex items-start justify-between gap-3 mb-5">
+                  <div className="p-3 rounded-xl bg-slate-100 dark:bg-night-900 border border-slate-200/80 dark:border-night-700">
+                    {getExperienceIcon(exp.id)}
+                  </div>
+                  <div className="text-right text-xs font-mono text-slate-500 dark:text-muted tabular-nums">
+                    <div>{exp.period}</div>
+                    {exp.badge && (
+                      <div className="text-[11px] font-sans font-semibold text-steel-600 dark:text-steel-400 mt-0.5">
+                        {exp.badge}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <ul className="space-y-4">
-                    <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-steel-500 mt-1 flex-shrink-0" />
-                        <p className="text-muted text-sm leading-relaxed">
-                            <strong className="text-offwhite">Analyse des Inégalités :</strong> Application de <span className="text-steel-400">modèles de panel</span> pour identifier les variables explicatives des inégalités de réussite (BEPC/BAC).
-                        </p>
+                <h3 className="text-lg font-display font-bold text-slate-900 dark:text-offwhite group-hover:text-steel-600 dark:group-hover:text-steel-400 transition-colors mb-1.5 leading-snug">
+                  {exp.role}
+                </h3>
+                <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1 flex items-start gap-1.5">
+                  <Building2 size={13} className="shrink-0 mt-0.5 text-steel-500" />
+                  <span>{exp.organization}</span>
+                </p>
+                <p className="text-xs text-slate-500 dark:text-muted mb-6">
+                  {exp.location}
+                </p>
+
+                <ul className="space-y-3.5 pt-4 border-t border-slate-100 dark:border-night-700">
+                  {exp.points.map((pt, pIdx) => (
+                    <li key={pIdx} className="flex items-start gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 text-steel-500 shrink-0 mt-0.5" />
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-muted leading-relaxed">
+                        <strong className="text-slate-800 dark:text-offwhite font-semibold">
+                          {pt.title} :{' '}
+                        </strong>
+                        {pt.description}
+                      </p>
                     </li>
-                    <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-steel-500 mt-1 flex-shrink-0" />
-                        <p className="text-muted text-sm leading-relaxed">
-                            <strong className="text-offwhite">Automatisation VBA :</strong> Développement d'un script pour automatiser le calcul de l'<span className="text-steel-400">indice de Gini</span> sur la période 2015-2023.
-                        </p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-steel-500 mt-1 flex-shrink-0" />
-                        <p className="text-muted text-sm leading-relaxed">
-                            <strong className="text-offwhite">Aide à la Décision :</strong> Production de graphiques et interprétations statistiques pour les documents stratégiques de la Direction.
-                        </p>
-                    </li>
+                  ))}
                 </ul>
-             </div>
-          </motion.div>
-
-          {/* Card 2: Socioanimer */}
-          <motion.div 
-             initial={{ opacity: 0, x: 30 }}
-             whileInView={{ opacity: 1, x: 0 }}
-             viewport={{ once: true }}
-             className="bg-night-900 rounded-2xl p-8 border border-night-700 hover:border-steel-500/40 transition-all hover:shadow-xl relative overflow-hidden group"
-           >
-             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <TrendingUp size={120} />
-             </div>
-
-             <div className="relative z-10">
-                <div className="flex justify-between items-start mb-6">
-                    <div>
-                        <h3 className="text-xl font-bold text-offwhite mb-1">Alternance Marketing Digital</h3>
-                        <p className="text-steel-400 font-medium">Socioanimer, Cotonou</p>
-                    </div>
-                    <span className="text-xs font-mono bg-night-800 text-muted px-3 py-1 rounded-full border border-night-700">Février - Juin 2025</span>
-                </div>
-
-                <ul className="space-y-4">
-                    <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-steel-500 mt-1 flex-shrink-0" />
-                        <p className="text-muted text-sm leading-relaxed">
-                            <strong className="text-offwhite">Stratégie & Performance :</strong> Gestion d'un portefeuille de campagnes publicitaires et optimisation du ROI.
-                        </p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-steel-500 mt-1 flex-shrink-0" />
-                        <p className="text-muted text-sm leading-relaxed">
-                            <strong className="text-offwhite">Optimisation Web :</strong> Collaboration technique avec les développeurs pour améliorer l'expérience utilisateur et le taux de conversion.
-                        </p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-steel-500 mt-1 flex-shrink-0" />
-                        <p className="text-muted text-sm leading-relaxed">
-                            <strong className="text-offwhite">Content Marketing :</strong> Déploiement d'une stratégie de contenu structurée pour accroître l'engagement communautaire.
-                        </p>
-                    </li>
-                </ul>
-             </div>
-          </motion.div>
-
+              </div>
+            </motion.article>
+          ))}
         </div>
       </div>
     </section>
